@@ -1,0 +1,192 @@
+openapi: 3.0.0
+info:
+  title: Infinitry API
+  version: 1.0.0
+  description: API untuk mengelola project, pemesanan, dan login admin di web Infinitry.
+paths:
+  /api/v1/projects:
+    get:
+      summary: Menampilkan semua project
+      responses:
+        '200':
+          description: Daftar project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+    post:
+      summary: Menambahkan project baru
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      responses:
+        '201':
+          description: Project berhasil ditambahkan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+
+  /api/v1/projects/{id}:
+    put:
+      summary: Mengubah project
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: UUID project yang akan diubah
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectCreate'
+      responses:
+        '200':
+          description: Project berhasil diubah
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectResponse'
+    delete:
+      summary: Menghapus project
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: UUID project yang akan dihapus
+      responses:
+        '200':
+          description: Project berhasil dihapus
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+
+  /api/v1/admins:
+    post:
+      summary: Login Admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLogin'
+      responses:
+        '200':
+          description: Login berhasil
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  token:
+                    type: string
+
+  /api/v1/orders:
+    post:
+      summary: Menambahkan pemesanan jasa
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Pemesanan berhasil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        thumbnial:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+        author:
+          type: string
+
+    ProjectCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        thumbnial:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+
+    ProjectResponse:
+      allOf:
+        - $ref: '#/components/schemas/Project'
+        - type: object
+          properties:
+            success:
+              type: boolean
+            message:
+              type: string
+
+    AdminLogin:
+      type: object
+      properties:
+        id:
+          type: string
+        password:
+          type: string
+
+    Order:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        email:
+          type: string
+        phone_number:
+          type: string
+
+    OrderResponse:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          properties:
+            id:
+              type: string
+            date:
+              type: string
+              format: date
